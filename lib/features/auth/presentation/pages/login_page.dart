@@ -4,28 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SignupPage extends ConsumerStatefulWidget {
-  const SignupPage({super.key});
+class LoginPage extends ConsumerStatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  ConsumerState<SignupPage> createState() => _SignupPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignupPageState extends ConsumerState<SignupPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -35,7 +32,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Create Account")),
+      appBar: AppBar(title: const Text('Login')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -43,7 +40,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
             key: _formKey,
             child: ListView(
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
 
                 const FlutterLogo(size: 80),
 
@@ -52,20 +49,21 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  validator: Validators.validateEmail,
                   decoration: const InputDecoration(
-                    labelText: "Email",
+                    labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
-                  validator: Validators.validateEmail,
                 ),
 
                 const SizedBox(height: 20),
 
                 TextFormField(
                   controller: _passwordController,
+                  validator: Validators.validatePassword,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: "Password",
+                    labelText: 'Password',
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -80,44 +78,21 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       },
                     ),
                   ),
-                  validator: (value) {
-                    return Validators.validateConfirmPassword(
-                      _passwordController.text,
-                      value,
-                    );
-                  },
+                ),
+
+                const SizedBox(height: 10),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      context.go('/forgot-password');
+                    },
+                    child: const Text('Forgot Password?'),
+                  ),
                 ),
 
                 const SizedBox(height: 20),
-
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirmPassword,
-                  decoration: InputDecoration(
-                    labelText: "Confirm Password",
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
-                    ),
-                  ),
-                  validator: (value) {
-                    return Validators.validateConfirmPassword(
-                      _passwordController.text,
-                      value,
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 30),
 
                 SizedBox(
                   height: 50,
@@ -127,35 +102,56 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         : () async {
                             if (!_formKey.currentState!.validate()) return;
 
+                            // We'll connect Firebase login next.
                             final success = await ref
                                 .read(authControllerProvider.notifier)
-                                .signUp(
+                                .signIn(
                                   email: _emailController.text.trim(),
-                                  password: _passwordController.text.trim(),
+                                  password: _passwordController.text,
                                 );
 
                             if (!mounted) return;
 
-                            if (success) {
+                            if (!success) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    'Verification email sent. Please check your inbox.',
-                                  ),
+                                  content: Text('Invalid email or password'),
                                 ),
                               );
+                              return;
+                            }
 
+                            final verified = await ref
+                                .read(authControllerProvider.notifier)
+                                .checkEmailVerification();
+
+                            if (!mounted) return;
+
+                            if (verified) {
+                              context.go('/home');
+                            } else {
                               context.go('/verify-email');
                             }
                           },
                     child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text("Create Account"),
+                        ? const CircularProgressIndicator()
+                        : const Text('Login'),
                   ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/signup');
+                      },
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
                 ),
               ],
             ),

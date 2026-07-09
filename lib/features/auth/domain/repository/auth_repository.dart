@@ -9,6 +9,10 @@ abstract class AuthRepository {
 
   Future<void> sendPasswordResetEmail({required String email});
 
+  Future<bool> isEmailVerified();
+
+  Future<void> reloadUser();
+
   Stream<bool> authStateChanges();
 
   bool get isLoggedIn;

@@ -41,5 +41,15 @@ class AuthRemoteDataSource {
     return firebaseAuth.authStateChanges().map((user) => user != null);
   }
 
+  Future<void> reloadUser() async {
+    await firebaseAuth.currentUser?.reload();
+  }
+
+  Future<bool> isEmailVerified() async {
+    await firebaseAuth.currentUser?.reload();
+
+    return firebaseAuth.currentUser?.emailVerified ?? false;
+  }
+
   bool get isLoggedIn => firebaseAuth.currentUser != null;
 }

@@ -9,9 +9,7 @@ class StickerHubApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Sticker Hub',
-
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
-
       routerConfig: appRouter,
     );
   }
