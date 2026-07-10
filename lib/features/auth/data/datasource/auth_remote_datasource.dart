@@ -1,3 +1,4 @@
+import 'package:create_sticker/features/auth/domain/entities/appUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRemoteDataSource {
@@ -49,6 +50,18 @@ class AuthRemoteDataSource {
     await firebaseAuth.currentUser?.reload();
 
     return firebaseAuth.currentUser?.emailVerified ?? false;
+  }
+
+  appuser? getCurrentUser() {
+    final user = firebaseAuth.currentUser;
+
+    if (user == null) return null;
+
+    return appuser(
+      uid: user.uid,
+      email: user.email ?? '',
+      isEmailVerified: user.emailVerified,
+    );
   }
 
   bool get isLoggedIn => firebaseAuth.currentUser != null;

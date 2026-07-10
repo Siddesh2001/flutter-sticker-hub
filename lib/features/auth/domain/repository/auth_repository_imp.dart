@@ -1,4 +1,5 @@
 import 'package:create_sticker/features/auth/data/datasource/auth_remote_datasource.dart';
+import 'package:create_sticker/features/auth/domain/entities/appUser.dart';
 import 'package:create_sticker/features/auth/presentation/providers/auth_providers.dart';
 
 import '../../domain/repository/auth_repository.dart';
@@ -46,6 +47,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> isEmailVerified() {
     return remoteDataSource.isEmailVerified();
+  }
+
+  @override
+  appuser? getCurrentUser() {
+    return remoteDataSource.getCurrentUser();
   }
 
   @override

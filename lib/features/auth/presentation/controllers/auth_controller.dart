@@ -54,4 +54,19 @@ class AuthController extends AsyncNotifier<void> {
       return false;
     }
   }
+
+  Future<bool> sendPasswordResetEmail({required String email}) async {
+    state = const AsyncLoading();
+
+    try {
+      await _repository.sendPasswordResetEmail(email: email);
+
+      state = const AsyncData(null);
+
+      return true;
+    } catch (e, stackTrace) {
+      state = AsyncError(e, stackTrace);
+      return false;
+    }
+  }
 }

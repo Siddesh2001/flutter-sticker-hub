@@ -1,7 +1,7 @@
 class appuser {
   final String uid;
-  final String email;
-  final String isEmailVerified;
+  final String? email;
+  final bool isEmailVerified;
 
   appuser({
     required this.uid,

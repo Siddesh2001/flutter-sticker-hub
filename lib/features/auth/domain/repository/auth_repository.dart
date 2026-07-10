@@ -1,4 +1,8 @@
+import 'package:create_sticker/features/auth/domain/entities/appUser.dart';
+
 abstract class AuthRepository {
+  appuser? getCurrentUser();
+
   Future<void> signUp({required String email, required String password});
 
   Future<void> signIn({required String email, required String password});
