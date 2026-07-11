@@ -73,6 +73,7 @@ class HomePage extends ConsumerWidget {
                   child: FilledButton.icon(
                     onPressed: () {
                       // Next feature
+                      context.push('/create-pack');
                     },
                     icon: const Icon(Icons.add),
                     label: const Text("Create Sticker Pack"),

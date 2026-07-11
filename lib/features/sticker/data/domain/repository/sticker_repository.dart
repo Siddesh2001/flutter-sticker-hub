@@ -1,0 +1,8 @@
+import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
+
+abstract class StickerRepository {
+  Future<void> createPack({required String name, required String author});
+
+  Future<List<StickerPack>> getStickerPacks();
+  Future<void> deletePack(String packId);
+}
