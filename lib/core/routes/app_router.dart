@@ -4,7 +4,9 @@ import 'package:create_sticker/features/auth/presentation/pages/verify_email_pag
 import 'package:create_sticker/features/home/presentation/pages/HomePage.dart';
 import 'package:create_sticker/features/home/presentation/pages/signUp.dart';
 import 'package:create_sticker/features/home/presentation/pages/splashScreen.dart';
+import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
 import 'package:create_sticker/features/sticker/presentation/pages/create_sticker_pack_page.dart';
+import 'package:create_sticker/features/sticker/presentation/pages/sticker_pack_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -33,6 +35,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/create-pack',
       builder: (context, state) => const CreateStickerPackPage(),
+    ),
+    GoRoute(
+      path: '/pack-details',
+      builder: (context, state) {
+        debugPrint("state.extra = ${state.extra}");
+
+        final pack = state.extra as StickerPack;
+
+        return StickerPackDetailsPage(pack: pack);
+      },
     ),
   ],
 
