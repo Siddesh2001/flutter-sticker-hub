@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:create_sticker/features/Image/presentation/providers/image_controller.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
+import 'package:create_sticker/features/storage/presentation/providers/storage_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -70,6 +71,14 @@ class _StickerPackDetailsPageState
                       selectedImage = bytes;
                     });
                   }
+
+                  if (bytes == null) return;
+
+                  final imageUrl = await ref
+                      .read(storageControllerProvider.notifier)
+                      .uploadSticker(bytes);
+
+                  debugPrint(imageUrl);
                 },
                 icon: const Icon(Icons.add_photo_alternate),
                 label: const Text("Add Sticker"),
