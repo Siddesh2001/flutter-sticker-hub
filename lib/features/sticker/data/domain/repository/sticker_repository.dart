@@ -1,3 +1,4 @@
+import 'package:create_sticker/features/sticker/data/domain/entity/sticker.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
 
 abstract class StickerRepository {
@@ -5,4 +6,7 @@ abstract class StickerRepository {
 
   Future<List<StickerPack>> getStickerPacks();
   Future<void> deletePack(String packId);
+  Future<void> addSticker({required String packId, required String imageUrl});
+
+  Future<List<Sticker>> getStickers(String packId);
 }

@@ -1,4 +1,5 @@
 import 'package:create_sticker/features/sticker/data/datasource/sticker_remote_datasource.dart';
+import 'package:create_sticker/features/sticker/data/domain/entity/sticker.dart';
 import 'package:create_sticker/features/sticker/data/domain/repository/sticker_repository.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
 
@@ -20,5 +21,15 @@ class StickerRepositoryImpl implements StickerRepository {
   @override
   Future<void> deletePack(String packId) {
     return remoteDataSource.deletePack(packId);
+  }
+
+  @override
+  Future<void> addSticker({required String packId, required String imageUrl}) {
+    return remoteDataSource.addSticker(packId: packId, imageUrl: imageUrl);
+  }
+
+  @override
+  Future<List<Sticker>> getStickers(String packId) {
+    return remoteDataSource.getStickers(packId);
   }
 }

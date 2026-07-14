@@ -17,6 +17,6 @@ class StickerModel extends Sticker {
   }
 
   Map<String, dynamic> toMap() {
-    return {'imageUrl': imageUrl, 'createdAt': createdAt};
+    return {'imageUrl': imageUrl, 'createdAt': Timestamp.fromDate(createdAt)};
   }
 }

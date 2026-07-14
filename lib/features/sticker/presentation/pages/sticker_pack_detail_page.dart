@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:create_sticker/features/Image/presentation/providers/image_controller.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
+import 'package:create_sticker/features/sticker/presentation/providers/sticker_details_controller.dart';
 import 'package:create_sticker/features/storage/presentation/providers/storage_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,8 +31,20 @@ class _StickerPackDetailsPageState
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref
+          .read(stickerDetailsControllerProvider.notifier)
+          .loadStickers(widget.pack.id);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final imageState = ref.watch(imageControllerProvider);
+    final stickerState = ref.watch(stickerDetailsControllerProvider);
     return Scaffold(
       appBar: AppBar(title: const Text("Sticker Pack")),
       body: Center(
@@ -73,12 +86,24 @@ class _StickerPackDetailsPageState
                   }
 
                   if (bytes == null) return;
+                  try {
+                    final imageUrl = await ref
+                        .read(storageControllerProvider.notifier)
+                        .uploadSticker(bytes);
 
-                  final imageUrl = await ref
-                      .read(storageControllerProvider.notifier)
-                      .uploadSticker(bytes);
+                    if (imageUrl == null) {
+                      throw Exception("Image upload failed");
+                    }
 
-                  debugPrint(imageUrl);
+                    await ref
+                        .read(stickerDetailsControllerProvider.notifier)
+                        .addSticker(packId: widget.pack.id, imageUrl: imageUrl);
+
+                    debugPrint("Sticker saved successfully");
+                  } catch (e, st) {
+                    debugPrint("Error: $e");
+                    debugPrintStack(stackTrace: st);
+                  }
                 },
                 icon: const Icon(Icons.add_photo_alternate),
                 label: const Text("Add Sticker"),
@@ -95,6 +120,52 @@ class _StickerPackDetailsPageState
                     fit: BoxFit.cover,
                   ),
                 ),
+              SizedBox(height: 20),
+
+              const SizedBox(height: 30),
+
+              const Text(
+                "Stickers",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 16),
+
+              Expanded(
+                child: stickerState.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+
+                  error: (e, _) => Center(child: Text(e.toString())),
+
+                  data: (stickers) {
+                    if (stickers.isEmpty) {
+                      return const Center(child: Text("No stickers yet"));
+                    }
+
+                    return GridView.builder(
+                      itemCount: stickers.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                          ),
+                      itemBuilder: (context, index) {
+                        final sticker = stickers[index];
+
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            sticker.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
