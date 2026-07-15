@@ -48,8 +48,19 @@ class StickerRemoteDataSource {
         .toList();
   }
 
-  Future<void> deletePack(String id) async {
-    await _packCollection.doc(id).delete();
+  Future<void> deleteSticker({
+    required String packId,
+    required String stickerId,
+  }) async {
+    await _packCollection
+        .doc(packId)
+        .collection('stickers')
+        .doc(stickerId)
+        .delete();
+
+    await _packCollection.doc(packId).update({
+      'stickerCount': FieldValue.increment(-1),
+    });
   }
 
   Future<void> addSticker({
@@ -92,6 +103,10 @@ class StickerRemoteDataSource {
       debugPrintStack(stackTrace: st);
       rethrow;
     }
+  }
+
+  Future<void> deletePack(String packId) async {
+    await _packCollection.doc(packId).delete();
   }
 
   Future<List<StickerModel>> getStickers(String packId) async {

@@ -19,6 +19,14 @@ class StickerRepositoryImpl implements StickerRepository {
   }
 
   @override
+  Future<void> deleteSticker({
+    required String packId,
+    required String stickerId,
+  }) {
+    return remoteDataSource.deleteSticker(packId: packId, stickerId: stickerId);
+  }
+
+  @override
   Future<void> deletePack(String packId) {
     return remoteDataSource.deletePack(packId);
   }

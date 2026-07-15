@@ -154,11 +154,55 @@ class _StickerPackDetailsPageState
                       itemBuilder: (context, index) {
                         final sticker = stickers[index];
 
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            sticker.imageUrl,
-                            fit: BoxFit.cover,
+                        return GestureDetector(
+                          onLongPress: () async {
+                            final shouldDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Delete Sticker"),
+                                content: const Text(
+                                  "Are you sure you want to delete this sticker?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text("Cancel"),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (shouldDelete == true) {
+                              await ref
+                                  .read(
+                                    stickerDetailsControllerProvider.notifier,
+                                  )
+                                  .deleteSticker(
+                                    packId: widget.pack.id,
+                                    stickerId: sticker.id,
+                                  );
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Sticker deleted"),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              sticker.imageUrl,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         );
                       },

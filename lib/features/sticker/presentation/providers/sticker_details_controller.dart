@@ -41,6 +41,17 @@ class StickerDetailsController extends AsyncNotifier<List<Sticker>> {
 
     await loadStickers(packId);
   }
+
+  Future<void> deleteSticker({
+    required String packId,
+    required String stickerId,
+  }) async {
+    await ref
+        .read(stickerRepositoryProvider)
+        .deleteSticker(packId: packId, stickerId: stickerId);
+
+    await loadStickers(packId);
+  }
 }
 
 final stickerDetailsControllerProvider =
