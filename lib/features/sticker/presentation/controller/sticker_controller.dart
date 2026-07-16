@@ -43,4 +43,15 @@ class StickerController extends AsyncNotifier<List<StickerPack>> {
 
     await refresh();
   }
+
+  Future<void> setCoverImage({
+    required String packId,
+    required String imageUrl,
+  }) async {
+    await ref
+        .read(stickerRepositoryProvider)
+        .setCoverImage(packId: packId, imageUrl: imageUrl);
+
+    await refresh();
+  }
 }

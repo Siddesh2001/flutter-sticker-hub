@@ -136,4 +136,11 @@ class StickerRemoteDataSource {
         .map((doc) => StickerModel.fromMap(doc.data(), doc.id))
         .toList();
   }
+
+  Future<void> setCoverImage({
+    required String packId,
+    required String imageUrl,
+  }) async {
+    await _packCollection.doc(packId).update({'coverImage': imageUrl});
+  }
 }

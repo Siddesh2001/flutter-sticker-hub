@@ -18,4 +18,9 @@ abstract class StickerRepository {
   });
 
   Future<void> renamePack({required String packId, required String newName});
+
+  Future<void> setCoverImage({
+    required String packId,
+    required String imageUrl,
+  });
 }

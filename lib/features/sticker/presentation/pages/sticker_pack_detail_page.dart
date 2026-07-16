@@ -160,39 +160,90 @@ class _StickerPackDetailsPageState
 
                         return GestureDetector(
                           onLongPress: () async {
-                            final shouldDelete = await showDialog<bool>(
+                            final action = await showModalBottomSheet<String>(
                               context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text("Delete Sticker"),
-                                content: const Text(
-                                  "Are you sure you want to delete this sticker?",
+                              builder: (_) => SafeArea(
+                                child: Wrap(
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.star),
+                                      title: const Text("Set as Cover"),
+                                      onTap: () =>
+                                          Navigator.pop(context, "cover"),
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      title: const Text("Delete Sticker"),
+                                      onTap: () =>
+                                          Navigator.pop(context, "delete"),
+                                    ),
+                                  ],
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                    child: const Text("Cancel"),
-                                  ),
-                                  FilledButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, true),
-                                    child: const Text("Delete"),
-                                  ),
-                                ],
                               ),
                             );
 
-                            if (shouldDelete == true) {
+                            if (action == "cover") {
                               await ref
-                                  .read(
-                                    stickerDetailsControllerProvider.notifier,
-                                  )
-                                  .deleteSticker(
+                                  .read(stickerControllerProvider.notifier)
+                                  .setCoverImage(
                                     packId: widget.pack.id,
-                                    stickerId: sticker.id,
+                                    imageUrl: sticker.imageUrl,
                                   );
+                              await ref
+                                  .read(stickerControllerProvider.notifier)
+                                  .refresh();
 
-                              if (context.mounted) {
+                              if (!context.mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Cover image updated"),
+                                ),
+                              );
+                            }
+
+                            if (action == "delete") {
+                              final shouldDelete = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Delete Sticker"),
+                                  content: const Text(
+                                    "Are you sure you want to delete this sticker?",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: const Text("Cancel"),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: const Text("Delete"),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (shouldDelete == true) {
+                                await ref
+                                    .read(
+                                      stickerDetailsControllerProvider.notifier,
+                                    )
+                                    .deleteSticker(
+                                      packId: widget.pack.id,
+                                      stickerId: sticker.id,
+                                    );
+
+                                await ref
+                                    .read(stickerControllerProvider.notifier)
+                                    .refresh();
+
+                                if (!context.mounted) return;
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("Sticker deleted"),

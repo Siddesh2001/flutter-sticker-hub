@@ -45,4 +45,12 @@ class StickerRepositoryImpl implements StickerRepository {
   Future<void> renamePack({required String packId, required String newName}) {
     return remoteDataSource.renamePack(packId: packId, newName: newName);
   }
+
+  @override
+  Future<void> setCoverImage({
+    required String packId,
+    required String imageUrl,
+  }) {
+    return remoteDataSource.setCoverImage(packId: packId, imageUrl: imageUrl);
+  }
 }
