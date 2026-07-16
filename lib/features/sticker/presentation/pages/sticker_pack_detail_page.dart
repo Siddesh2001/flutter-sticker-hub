@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:create_sticker/features/Image/presentation/providers/image_controller.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
+import 'package:create_sticker/features/sticker/presentation/providers/sticker_controller_provider.dart';
 import 'package:create_sticker/features/sticker/presentation/providers/sticker_details_controller.dart';
 import 'package:create_sticker/features/storage/presentation/providers/storage_controller.dart';
 import 'package:flutter/material.dart';
@@ -99,6 +100,9 @@ class _StickerPackDetailsPageState
                         .read(stickerDetailsControllerProvider.notifier)
                         .addSticker(packId: widget.pack.id, imageUrl: imageUrl);
 
+                    await ref
+                        .read(stickerControllerProvider.notifier)
+                        .refresh();
                     debugPrint("Sticker saved successfully");
                   } catch (e, st) {
                     debugPrint("Error: $e");

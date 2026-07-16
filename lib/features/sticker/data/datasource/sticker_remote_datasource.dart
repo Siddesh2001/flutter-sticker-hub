@@ -38,6 +38,13 @@ class StickerRemoteDataSource {
     await doc.set(pack.toMap());
   }
 
+  Future<void> renamePack({
+    required String packId,
+    required String newName,
+  }) async {
+    await _packCollection.doc(packId).update({'name': newName});
+  }
+
   Future<List<StickerPackModel>> getStickerPacks() async {
     final snapshot = await _packCollection
         .orderBy('createdAt', descending: true)
@@ -90,6 +97,15 @@ class StickerRemoteDataSource {
       debugPrint("STEP 3");
 
       await stickerDoc.set(sticker.toMap());
+      final packDoc = _packCollection.doc(packId);
+
+      final packSnapshot = await packDoc.get();
+
+      final currentCover = packSnapshot.data()?['coverImage'] ?? '';
+
+      if (currentCover.isEmpty) {
+        await packDoc.update({'coverImage': imageUrl});
+      }
 
       debugPrint("STEP 4 - Sticker document created");
 

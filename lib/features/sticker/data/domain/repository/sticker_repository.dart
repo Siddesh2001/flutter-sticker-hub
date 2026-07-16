@@ -16,4 +16,6 @@ abstract class StickerRepository {
     required String packId,
     required String stickerId,
   });
+
+  Future<void> renamePack({required String packId, required String newName});
 }

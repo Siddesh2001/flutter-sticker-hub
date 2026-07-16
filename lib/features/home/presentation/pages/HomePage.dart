@@ -111,7 +111,69 @@ class HomePage extends ConsumerWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: packs.length,
                         itemBuilder: (context, index) {
-                          return StickerPackCard(pack: packs[index]);
+                          return StickerPackCard(
+                            pack: packs[index],
+                            onTap: () {
+                              context.push(
+                                '/pack-details',
+                                extra: packs[index],
+                              );
+                            },
+
+                            onRename: (newName) async {
+                              await ref
+                                  .read(stickerControllerProvider.notifier)
+                                  .renamePack(
+                                    packId: packs[index].id,
+                                    newName: newName,
+                                  );
+
+                              if (!context.mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Sticker pack renamed"),
+                                ),
+                              );
+                            },
+                            onDelete: () async {
+                              final shouldDelete = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Delete Sticker Pack"),
+                                  content: Text(
+                                    "Are you sure you want to delete '${packs[index].name}'?",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: const Text("Cancel"),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: const Text("Delete"),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (shouldDelete != true) return;
+
+                              await ref
+                                  .read(stickerControllerProvider.notifier)
+                                  .deletePack(packs[index].id);
+
+                              if (!context.mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Sticker pack deleted"),
+                                ),
+                              );
+                            },
+                          );
                         },
                       );
                     },

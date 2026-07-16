@@ -27,6 +27,17 @@ class StickerController extends AsyncNotifier<List<StickerPack>> {
     await refresh();
   }
 
+  Future<void> renamePack({
+    required String packId,
+    required String newName,
+  }) async {
+    await ref
+        .read(stickerRepositoryProvider)
+        .renamePack(packId: packId, newName: newName);
+
+    await refresh();
+  }
+
   Future<void> deletePack(String id) async {
     await ref.read(stickerRepositoryProvider).deletePack(id);
 

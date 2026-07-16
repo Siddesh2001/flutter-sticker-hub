@@ -40,4 +40,9 @@ class StickerRepositoryImpl implements StickerRepository {
   Future<List<Sticker>> getStickers(String packId) {
     return remoteDataSource.getStickers(packId);
   }
+
+  @override
+  Future<void> renamePack({required String packId, required String newName}) {
+    return remoteDataSource.renamePack(packId: packId, newName: newName);
+  }
 }
