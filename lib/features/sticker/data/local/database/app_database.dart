@@ -1,16 +1,21 @@
 import 'dart:io';
-
+import '../dao/sticker_dao.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import '../dao/sticker_pack_dao.dart';
+import '../dao/sticker_dao.dart';
 
 import '../tables/sticker_packs.dart';
 import '../tables/stickers.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [StickerPacks, Stickers])
+@DriftDatabase(
+  tables: [StickerPacks, Stickers],
+  daos: [StickerPackDao, StickerDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

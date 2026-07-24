@@ -1148,6 +1148,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $StickerPacksTable stickerPacks = $StickerPacksTable(this);
   late final $StickersTable stickers = $StickersTable(this);
+  late final StickerPackDao stickerPackDao = StickerPackDao(
+    this as AppDatabase,
+  );
+  late final StickerDao stickerDao = StickerDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
