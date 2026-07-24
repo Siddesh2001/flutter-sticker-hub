@@ -26,13 +26,19 @@ class StickerRemoteDataSource {
   }) async {
     final doc = _packCollection.doc();
 
+    final now = DateTime.now();
+
     final pack = StickerPackModel(
       id: doc.id,
       name: name,
       author: author,
-      createdAt: DateTime.now(),
+      coverImageCloudUrl: '',
+      coverImageLocalPath: '',
       stickerCount: 0,
-      coverImage: '',
+      createdAt: now,
+      updatedAt: now,
+      isSynced: true,
+      lastSynced: now,
     );
 
     await doc.set(pack.toMap());
@@ -88,10 +94,16 @@ class StickerRemoteDataSource {
       debugPrint("STEP 2");
       debugPrint("Sticker Doc ID: ${stickerDoc.id}");
 
+      final now = DateTime.now();
+
       final sticker = StickerModel(
         id: stickerDoc.id,
-        imageUrl: imageUrl,
-        createdAt: DateTime.now(),
+        cloudUrl: imageUrl,
+        localPath: '',
+        createdAt: now,
+        isDownloaded: false,
+        isSynced: true,
+        lastSynced: now,
       );
 
       debugPrint("STEP 3");

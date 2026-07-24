@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:create_sticker/features/Image/presentation/providers/image_controller.dart';
@@ -190,7 +191,7 @@ class _StickerPackDetailsPageState
                                   .read(stickerControllerProvider.notifier)
                                   .setCoverImage(
                                     packId: widget.pack.id,
-                                    imageUrl: sticker.imageUrl,
+                                    imageUrl: sticker.cloudUrl,
                                   );
                               await ref
                                   .read(stickerControllerProvider.notifier)
@@ -254,10 +255,15 @@ class _StickerPackDetailsPageState
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              sticker.imageUrl,
-                              fit: BoxFit.cover,
-                            ),
+                            child: sticker.localPath.isNotEmpty
+                                ? Image.file(
+                                    File(sticker.localPath),
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    sticker.cloudUrl,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         );
                       },

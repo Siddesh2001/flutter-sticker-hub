@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -85,18 +87,27 @@ class StickerPackCard extends StatelessWidget {
           }
         },
 
-        leading: pack.coverImage.isNotEmpty
+        leading: pack.coverImageLocalPath.isNotEmpty
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  File(pack.coverImageLocalPath),
+                  width: 56,
+                  height: 56,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : pack.coverImageCloudUrl.isNotEmpty
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  pack.coverImage,
+                  pack.coverImageCloudUrl,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
                 ),
               )
             : const CircleAvatar(child: Icon(Icons.collections)),
-
         title: Text(pack.name),
 
         subtitle: Column(

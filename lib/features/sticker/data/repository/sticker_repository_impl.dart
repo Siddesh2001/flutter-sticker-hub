@@ -2,11 +2,16 @@ import 'package:create_sticker/features/sticker/data/datasource/sticker_remote_d
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker.dart';
 import 'package:create_sticker/features/sticker/data/domain/repository/sticker_repository.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
+import 'package:create_sticker/features/sticker/data/local/datasource/sticker_local_datasource.dart';
 
 class StickerRepositoryImpl implements StickerRepository {
   final StickerRemoteDataSource remoteDataSource;
+  final StickerLocalDataSource localDataSource;
 
-  StickerRepositoryImpl({required this.remoteDataSource});
+  StickerRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+  });
 
   @override
   Future<void> createPack({required String name, required String author}) {

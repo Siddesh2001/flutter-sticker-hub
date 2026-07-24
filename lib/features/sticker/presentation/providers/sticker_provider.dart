@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:create_sticker/features/sticker/data/local/providers/local_provider.dart';
 import 'package:create_sticker/features/sticker/data/repository/sticker_repository_impl.dart';
 import 'package:create_sticker/features/auth/presentation/providers/auth_providers.dart';
 import 'package:create_sticker/features/sticker/data/datasource/sticker_remote_datasource.dart';
@@ -21,5 +22,6 @@ final stickerRemoteDataSourceProvider = Provider<StickerRemoteDataSource>((
 final stickerRepositoryProvider = Provider<StickerRepository>((ref) {
   return StickerRepositoryImpl(
     remoteDataSource: ref.read(stickerRemoteDataSourceProvider),
+    localDataSource: ref.read(stickerLocalDataSourceProvider),
   );
 });
