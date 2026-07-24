@@ -2,15 +2,19 @@ import 'package:create_sticker/features/sticker/data/datasource/sticker_remote_d
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker.dart';
 import 'package:create_sticker/features/sticker/data/domain/repository/sticker_repository.dart';
 import 'package:create_sticker/features/sticker/data/domain/entity/sticker_pack.dart';
-import 'package:create_sticker/features/sticker/data/local/datasource/sticker_local_datasource.dart';
+import 'package:create_sticker/features/sticker/data/local/dao/sticker_pack_dao.dart';
+import 'package:create_sticker/features/sticker/data/local/dao/sticker_dao.dart';
+import 'package:create_sticker/features/sticker/data/local/mapper/sticker_pack_mapper.dart';
 
 class StickerRepositoryImpl implements StickerRepository {
   final StickerRemoteDataSource remoteDataSource;
-  final StickerLocalDataSource localDataSource;
+  final StickerPackDao stickerPackDao;
+  final StickerDao stickerDao;
 
   StickerRepositoryImpl({
     required this.remoteDataSource,
-    required this.localDataSource,
+    required this.stickerPackDao,
+    required this.stickerDao,
   });
 
   @override
@@ -19,8 +23,19 @@ class StickerRepositoryImpl implements StickerRepository {
   }
 
   @override
-  Future<List<StickerPack>> getStickerPacks() {
-    return remoteDataSource.getStickerPacks();
+  Future<List<StickerPack>> getStickerPacks() async {
+    // Read local database first
+
+    // Fetch from Firestore
+    final remotePacks = await remoteDataSource.getStickerPacks();
+
+    // Save to local database
+    for (final pack in remotePacks) {
+      await stickerPackDao.insertPack(pack.toCompanion());
+    }
+
+    // Return freshly downloaded data
+    return remotePacks;
   }
 
   @override

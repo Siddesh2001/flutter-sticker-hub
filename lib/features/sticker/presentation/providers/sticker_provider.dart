@@ -22,6 +22,7 @@ final stickerRemoteDataSourceProvider = Provider<StickerRemoteDataSource>((
 final stickerRepositoryProvider = Provider<StickerRepository>((ref) {
   return StickerRepositoryImpl(
     remoteDataSource: ref.read(stickerRemoteDataSourceProvider),
-    localDataSource: ref.read(stickerLocalDataSourceProvider),
+    stickerPackDao: ref.read(stickerPackDaoProvider),
+    stickerDao: ref.read(stickerDaoProvider),
   );
 });
